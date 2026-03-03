@@ -1,11 +1,10 @@
 [![gitlocalized ](https://gitlocalize.com/repo/10697/whole_project/badge.svg)](https://gitlocalize.com/repo/10697?utm_source=badge)
 
+![Satisfactory Icon](/custom_components/satisfactory/brand/icon@2x.png)
+
 # Ha-satisfactory
 
 Ha-Satisfactory is a Home Assistant integration for monitoring a Satisfactory Dedicated Server. It uses the [Satisfactory Dedicated Server API](https://satisfactory.wiki.gg/wiki/Dedicated_servers/HTTPS_API) to poll the server state and exposes the data as sensors in Home Assistant.
-
-> [!WARNING]
-> This component is in early development and may not be stable. Use with caution and report any issues to the repository.
 
 ## Installation
 
@@ -52,3 +51,7 @@ Go to **Settings → Devices & Services → Add Integration** and search for **S
 2. Find the **Satisfactory** integration and click **Delete**.
 3. Optionally remove the `custom_components/satisfactory` folder and restart Home Assistant.
 
+## Disclaimer
+
+This Home Assistant integration is an unofficial, community-made project.  
+It is **not created, affiliated with, or endorsed by Coffee Stain Studios**, the developers of Satisfactory.
