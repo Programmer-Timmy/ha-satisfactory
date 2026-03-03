@@ -1,4 +1,4 @@
-[![gitlocalized ](https://gitlocalize.com/repo/10697/whole_project/badge.svg)](https://gitlocalize.com/repo/10697?utm_source=badge)
+[![version](https://img.shields.io/github/manifest-json/v/Programmer-Timmy/ha-satisfactory?filename=custom_components%2Fsatisfactory%2Fmanifest.json&color=slateblue)](https://github.com/Programmer-Timmy/ha-satisfactory/releases/latest) [![HACS](https://img.shields.io/badge/HACS-Default-orange.svg?logo=HomeAssistantCommunityStore&logoColor=white)](https://github.com/hacs/integration) [![gitlocalized ](https://gitlocalize.com/repo/10697/whole_project/badge.svg)](https://gitlocalize.com/repo/10697?utm_source=badge) 
 
 <img src="https://raw.githubusercontent.com/Programmer-Timmy/ha-satisfactory/main/custom_components/satisfactory/brand/icon.png" width="100" />
 
