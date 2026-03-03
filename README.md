@@ -1,6 +1,6 @@
 [![gitlocalized ](https://gitlocalize.com/repo/10697/whole_project/badge.svg)](https://gitlocalize.com/repo/10697?utm_source=badge)
 
-![Satisfactory Icon](/custom_components/satisfactory/brand/icon@2x.png)
+<img src="/custom_components/satisfactory/brand/icon.png" width="100" />
 
 # Ha-satisfactory
 
