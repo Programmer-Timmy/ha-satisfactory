@@ -9,8 +9,6 @@ from custom_components.satisfactory.sensor import (
     SatisfactorySensorEntity,
     SatisfactorySensorEntityDescription,
 )
-from custom_components.satisfactory.const import DOMAIN
-
 
 SAMPLE_DATA = {
     "activeSessionName": "TestSession",
@@ -20,6 +18,7 @@ SAMPLE_DATA = {
     "averageTickRate": 30.0,
     "totalGameDuration": 5,
     "gamePhase": "Phase One",
+    "serverHealth": "healthy",
 }
 
 
@@ -71,9 +70,10 @@ class TestSensorDescriptions:
         assert "total_game_duration" in keys
         assert "active_session_name" in keys
         assert "game_phase" in keys
+        assert "server_health" in keys
 
     def test_seven_sensors_defined(self) -> None:
-        assert len(SENSOR_DESCRIPTIONS) == 7  # noqa: PLR2004
+        assert len(SENSOR_DESCRIPTIONS) == 8
 
 
 class TestSatisfactorySensorEntity:
@@ -84,7 +84,7 @@ class TestSatisfactorySensorEntity:
     ) -> None:
         desc = next(d for d in SENSOR_DESCRIPTIONS if d.key == "num_connected_players")
         sensor = make_sensor(mock_coordinator, mock_entry, desc)
-        assert sensor.native_value == 2  # noqa: PLR2004
+        assert sensor.native_value == 2
 
     def test_native_value_active_session_name(
         self, mock_coordinator: MagicMock, mock_entry: MagicMock

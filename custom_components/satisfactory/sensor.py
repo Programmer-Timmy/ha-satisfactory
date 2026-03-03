@@ -6,11 +6,12 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.sensor import (
+    SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import CONF_HOST, CONF_PORT
+from homeassistant.const import CONF_HOST, CONF_PORT, EntityCategory, UnitOfTime
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -21,6 +22,8 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+PARALLEL_UPDATES = 0
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -38,20 +41,18 @@ SENSOR_DESCRIPTIONS: tuple[SatisfactorySensorEntityDescription, ...] = (
         native_unit_of_measurement="players",
         state_class=SensorStateClass.MEASUREMENT,
         device_class=None,
-        icon="mdi:account-multiple",  # icon toegevoegd
     ),
     SatisfactorySensorEntityDescription(
         key="player_limit",
         data_key="playerLimit",
         translation_key="player_limit",
         native_unit_of_measurement="players",
-        icon="mdi:account-group",  # icon toegevoegd
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     SatisfactorySensorEntityDescription(
         key="tech_tier",
         data_key="techTier",
         translation_key="tech_tier",
-        icon="mdi:factory",  # icon toegevoegd
     ),
     SatisfactorySensorEntityDescription(
         key="average_tick_rate",
@@ -59,27 +60,32 @@ SENSOR_DESCRIPTIONS: tuple[SatisfactorySensorEntityDescription, ...] = (
         translation_key="average_tick_rate",
         native_unit_of_measurement="ticks/s",
         state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:clock-outline",  # icon toegevoegd
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     SatisfactorySensorEntityDescription(
         key="total_game_duration",
         data_key="totalGameDuration",
         translation_key="total_game_duration",
-        native_unit_of_measurement="h",
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.TOTAL_INCREASING,
-        icon="mdi:timer-sand",  # icon toegevoegd
     ),
     SatisfactorySensorEntityDescription(
         key="active_session_name",
         data_key="activeSessionName",
         translation_key="active_session_name",
-        icon="mdi:gamepad-variant",  # icon toegevoegd
     ),
     SatisfactorySensorEntityDescription(
         key="game_phase",
         data_key="gamePhase",
         translation_key="game_phase",
-        icon="mdi:progress-clock",  # icon toegevoegd
+    ),
+    SatisfactorySensorEntityDescription(
+        key="server_health",
+        data_key="serverHealth",
+        translation_key="server_health",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
 )
 

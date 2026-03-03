@@ -3,11 +3,11 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import UpdateFailed
 from satisfactory_api_client.exceptions import APIError
 
 from custom_components.satisfactory.coordinator import SatisfactoryCoordinator
-from custom_components.satisfactory.const import DEFAULT_SCAN_INTERVAL, DOMAIN
 
 
 @pytest.fixture
@@ -149,8 +149,8 @@ class TestAsyncUpdateData:
     async def test_success(
         self, coordinator: SatisfactoryCoordinator, mock_client: AsyncMock
     ) -> None:
-        mock_response = MagicMock()
-        mock_response.data = {
+        mock_state = MagicMock()
+        mock_state.data = {
             "serverGameState": {
                 "activeSessionName": "TestSession",
                 "numConnectedPlayers": 2,
@@ -161,20 +161,38 @@ class TestAsyncUpdateData:
                 "gamePhase": "Foo/Bar.Phase_One",
             }
         }
-        mock_client.query_server_state.return_value = mock_response
+        mock_health = MagicMock()
+        mock_health.data = {"health": "healthy"}
+        mock_client.query_server_state.return_value = mock_state
+        mock_client.health_check.return_value = mock_health
 
         result = await coordinator._async_update_data()  # noqa: SLF001
 
         assert result["activeSessionName"] == "TestSession"
         assert result["numConnectedPlayers"] == 2
         assert result["totalGameDuration"] == 1
+        assert result["serverHealth"] == "healthy"
 
-    async def test_api_error_raises_update_failed(
+    async def test_health_slow(
+        self, coordinator: SatisfactoryCoordinator, mock_client: AsyncMock
+    ) -> None:
+        mock_state = MagicMock()
+        mock_state.data = {"serverGameState": {}}
+        mock_health = MagicMock()
+        mock_health.data = {"health": "slow"}
+        mock_client.query_server_state.return_value = mock_state
+        mock_client.health_check.return_value = mock_health
+
+        result = await coordinator._async_update_data()  # noqa: SLF001
+
+        assert result["serverHealth"] == "slow"
+
+    async def test_api_error_raises_config_entry_auth_failed(
         self, coordinator: SatisfactoryCoordinator, mock_client: AsyncMock
     ) -> None:
         mock_client.query_server_state.side_effect = APIError("ERR", "server error")
 
-        with pytest.raises(UpdateFailed):
+        with pytest.raises(ConfigEntryAuthFailed):
             await coordinator._async_update_data()  # noqa: SLF001
 
     async def test_generic_error_raises_update_failed(
@@ -188,9 +206,13 @@ class TestAsyncUpdateData:
     async def test_empty_server_game_state(
         self, coordinator: SatisfactoryCoordinator, mock_client: AsyncMock
     ) -> None:
-        mock_response = MagicMock()
-        mock_response.data = {}
-        mock_client.query_server_state.return_value = mock_response
+        mock_state = MagicMock()
+        mock_state.data = {}
+        mock_health = MagicMock()
+        mock_health.data = {"health": "healthy"}
+        mock_client.query_server_state.return_value = mock_state
+        mock_client.health_check.return_value = mock_health
 
         result = await coordinator._async_update_data()  # noqa: SLF001
         assert result["numConnectedPlayers"] == 0
+        assert result["serverHealth"] == "healthy"

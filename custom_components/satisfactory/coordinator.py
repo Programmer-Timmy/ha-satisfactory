@@ -6,6 +6,7 @@ import logging
 from datetime import timedelta
 from typing import TYPE_CHECKING, Any
 
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from satisfactory_api_client.exceptions import APIError
 
@@ -69,14 +70,16 @@ class SatisfactoryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from the Satisfactory server."""
         try:
-            response = await self.client.query_server_state()
+            state_response = await self.client.query_server_state()
+            health_response = await self.client.health_check()
         except APIError as err:
-            msg = f"Error communicating with Satisfactory server: {err}"
-            raise UpdateFailed(msg) from err
+            raise ConfigEntryAuthFailed from err
         except Exception as err:
             msg = f"Unexpected error: {err}"
             raise UpdateFailed(msg) from err
 
-        _LOGGER.debug("Satisfactory server response: %s", response)
+        _LOGGER.debug("Satisfactory server response: %s", state_response)
 
-        return self._sanitise_data(response.data.get("serverGameState", {}))
+        data = self._sanitise_data(state_response.data.get("serverGameState", {}))
+        data["serverHealth"] = health_response.data.get("health", "unknown")
+        return data

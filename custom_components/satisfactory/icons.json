@@ -1,0 +1,30 @@
+{
+  "entity": {
+    "sensor": {
+      "num_connected_players": {
+        "default": "mdi:account-multiple"
+      },
+      "player_limit": {
+        "default": "mdi:account-group"
+      },
+      "tech_tier": {
+        "default": "mdi:factory"
+      },
+      "average_tick_rate": {
+        "default": "mdi:clock-outline"
+      },
+      "total_game_duration": {
+        "default": "mdi:timer-sand"
+      },
+      "active_session_name": {
+        "default": "mdi:gamepad-variant"
+      },
+      "game_phase": {
+        "default": "mdi:progress-clock"
+      },
+      "server_health": {
+        "default": "mdi:heart-pulse"
+      }
+    }
+  }
+}

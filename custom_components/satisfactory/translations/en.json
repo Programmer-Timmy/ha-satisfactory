@@ -27,7 +27,8 @@
             "average_tick_rate": {"name": "Average tick rate"},
             "total_game_duration": {"name": "Total game duration"},
             "active_session_name": {"name": "Active session"},
-            "game_phase": {"name": "Game phase"}
+            "game_phase": {"name": "Game phase"},
+            "server_health": {"name": "Server health"}
         }
     }
 }

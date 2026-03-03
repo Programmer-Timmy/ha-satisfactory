@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, Platform
-from satisfactory_api_client import AsyncSatisfactoryAPI
+from homeassistant.exceptions import ConfigEntryAuthFailed
+from satisfactory_api_client import APIError, AsyncSatisfactoryAPI
 from satisfactory_api_client.data.minimum_privilege_level import MinimumPrivilegeLevel
 
 if TYPE_CHECKING:
@@ -30,9 +31,12 @@ async def async_setup_entry(
         skip_ssl_verification=entry.data.get(CONF_SKIP_SSL, True),
     )
 
-    await client.password_login(
-        MinimumPrivilegeLevel.ADMINISTRATOR, entry.data[CONF_PASSWORD]
-    )
+    try:
+        await client.password_login(
+            MinimumPrivilegeLevel.ADMINISTRATOR, entry.data[CONF_PASSWORD]
+        )
+    except APIError as err:
+        raise ConfigEntryAuthFailed from err
 
     coordinator = SatisfactoryCoordinator(hass, client)
     await coordinator.async_config_entry_first_refresh()

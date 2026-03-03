@@ -9,7 +9,11 @@
   "documentation": "https://github.com/Programmer-Timmy/ha-satisfactory",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/Programmer-Timmy/ha-satisfactory/issues",
-  "quality_scale": "bronze",
+  "loggers": [
+    "custom_components.satisfactory",
+    "satisfactory_api_client"
+  ],
+  "quality_scale": "silver",
   "requirements": [
     "satisfactory-api-client==0.2.0"
   ],
