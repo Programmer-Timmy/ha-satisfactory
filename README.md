@@ -1,6 +1,6 @@
 [![gitlocalized ](https://gitlocalize.com/repo/10697/whole_project/badge.svg)](https://gitlocalize.com/repo/10697?utm_source=badge)
 
-<img src="/custom_components/satisfactory/brand/icon.png" width="100" />
+<img src="https://raw.githubusercontent.com/Programmer-Timmy/ha-satisfactory/main/custom_components/satisfactory/brand/icon.png" width="100" />
 
 # Ha-satisfactory
 
@@ -44,6 +44,18 @@ Go to **Settings → Devices & Services → Add Integration** and search for **S
 | Total game duration | Total hours the game has been running | h |
 | Active session | Name of the active game session | — |
 | Game phase | Current game phase | — |
+| Server health | Health status reported by the server | — |
+
+## Events
+
+The integration fires events on the Home Assistant event bus whenever the server state changes. You can use these in automations via the **Event** trigger with the event type listed below.
+
+| Event type | Fired when | Event data |
+|---|---|---|
+| `satisfactory_player_joined` | A player connects to the server | `entry_id`, `num_connected_players`, `player_limit` |
+| `satisfactory_player_left` | A player disconnects from the server | `entry_id`, `num_connected_players`, `player_limit` |
+
+> **Note:** Events are only fired on state *changes*. No event is fired on the very first data poll. The `entry_id` field identifies which server instance fired the event, which is useful if you have multiple servers configured.
 
 ## Removal
 

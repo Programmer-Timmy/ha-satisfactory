@@ -7,6 +7,10 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import UpdateFailed
 from satisfactory_api_client.exceptions import APIError
 
+from custom_components.satisfactory.const import (
+    EVENT_PLAYER_JOINED,
+    EVENT_PLAYER_LEFT,
+)
 from custom_components.satisfactory.coordinator import SatisfactoryCoordinator
 
 
@@ -35,6 +39,7 @@ def coordinator(
         coord.data = {}
         coord.logger = MagicMock()
         coord.hass = mock_hass
+        coord.entry_id = "test_entry_id"
         return coord
 
 
@@ -216,3 +221,96 @@ class TestAsyncUpdateData:
         result = await coordinator._async_update_data()  # noqa: SLF001
         assert result["numConnectedPlayers"] == 0
         assert result["serverHealth"] == "healthy"
+
+
+# --- _fire_events ---
+
+
+class TestFireEvents:
+    """Tests for _fire_events."""
+
+    def test_player_joined_fires_event(
+        self, coordinator: SatisfactoryCoordinator
+    ) -> None:
+        old = {"numConnectedPlayers": 1, "playerLimit": 4}
+        new = {"numConnectedPlayers": 2, "playerLimit": 4}
+        coordinator._fire_events(old, new)  # noqa: SLF001
+        coordinator.hass.bus.async_fire.assert_called_once_with(
+            EVENT_PLAYER_JOINED,
+            {
+                "entry_id": "test_entry_id",
+                "num_connected_players": 2,
+                "player_limit": 4,
+            },
+        )
+
+    def test_player_left_fires_event(
+        self, coordinator: SatisfactoryCoordinator
+    ) -> None:
+        old = {"numConnectedPlayers": 3, "playerLimit": 4}
+        new = {"numConnectedPlayers": 2, "playerLimit": 4}
+        coordinator._fire_events(old, new)  # noqa: SLF001
+        coordinator.hass.bus.async_fire.assert_called_once_with(
+            EVENT_PLAYER_LEFT,
+            {
+                "entry_id": "test_entry_id",
+                "num_connected_players": 2,
+                "player_limit": 4,
+            },
+        )
+
+    def test_no_player_event_when_count_unchanged(
+        self, coordinator: SatisfactoryCoordinator
+    ) -> None:
+        old = {"numConnectedPlayers": 2, "playerLimit": 4}
+        new = {"numConnectedPlayers": 2, "playerLimit": 4}
+        coordinator._fire_events(old, new)  # noqa: SLF001
+        coordinator.hass.bus.async_fire.assert_not_called()
+
+    async def test_fire_events_called_on_update_when_data_exists(
+        self, coordinator: SatisfactoryCoordinator, mock_client: AsyncMock
+    ) -> None:
+        coordinator.data = {
+            "numConnectedPlayers": 1,
+            "playerLimit": 4,
+            "gamePhase": "Phase One",
+            "serverHealth": "healthy",
+        }
+        mock_state = MagicMock()
+        mock_state.data = {
+            "serverGameState": {
+                "numConnectedPlayers": 2,
+                "playerLimit": 4,
+                "gamePhase": "Foo/Bar.Phase_One",
+            }
+        }
+        mock_health = MagicMock()
+        mock_health.data = {"health": "healthy"}
+        mock_client.query_server_state.return_value = mock_state
+        mock_client.health_check.return_value = mock_health
+
+        await coordinator._async_update_data()  # noqa: SLF001
+
+        coordinator.hass.bus.async_fire.assert_called_once_with(
+            EVENT_PLAYER_JOINED,
+            {
+                "entry_id": "test_entry_id",
+                "num_connected_players": 2,
+                "player_limit": 4,
+            },
+        )
+
+    async def test_no_events_on_first_update(
+        self, coordinator: SatisfactoryCoordinator, mock_client: AsyncMock
+    ) -> None:
+        coordinator.data = {}
+        mock_state = MagicMock()
+        mock_state.data = {"serverGameState": {"numConnectedPlayers": 2}}
+        mock_health = MagicMock()
+        mock_health.data = {"health": "healthy"}
+        mock_client.query_server_state.return_value = mock_state
+        mock_client.health_check.return_value = mock_health
+
+        await coordinator._async_update_data()  # noqa: SLF001
+
+        coordinator.hass.bus.async_fire.assert_not_called()

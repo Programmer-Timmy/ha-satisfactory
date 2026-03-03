@@ -30,5 +30,15 @@
             "game_phase": {"name": "Game phase"},
             "server_health": {"name": "Server health"}
         }
+    },
+    "events": {
+        "satisfactory_player_joined": {
+            "name": "Player joined",
+            "description": "Fired when a player connects to the Satisfactory server."
+        },
+        "satisfactory_player_left": {
+            "name": "Player left",
+            "description": "Fired when a player disconnects from the Satisfactory server."
+        }
     }
 }
