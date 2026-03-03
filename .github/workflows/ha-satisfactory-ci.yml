@@ -90,7 +90,7 @@ jobs:
   pytest:
     name: Run Pytest
     runs-on: ubuntu-latest
-    needs: [hassfest, ruff, hacs]
+    needs: [hassfest, ruff, ruff-format, hacs]
 
     steps:
       - name: Checkout repository
@@ -116,4 +116,4 @@ jobs:
           pip install pytest
 
       - name: Run Pytest
-        run: pytest custom_components/satisfactory/tests --maxfail=1 --disable-warnings -v
+        run: pytest --cov=custom_components/satisfactory --cov-report=xml

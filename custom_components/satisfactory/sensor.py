@@ -83,8 +83,9 @@ SENSOR_DESCRIPTIONS: tuple[SatisfactorySensorEntityDescription, ...] = (
     ),
 )
 
+
 async def async_setup_entry(
-    hass: HomeAssistant,   # noqa: ARG001
+    hass: HomeAssistant,  # noqa: ARG001
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
