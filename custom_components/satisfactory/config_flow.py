@@ -8,67 +8,49 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import DOMAIN
+from .const import DEFAULT_PORT, DOMAIN, CONF_SKIP_SSL
 
 _LOGGER = logging.getLogger(__name__)
 
-# TODO adjust the data schema to the data that you need
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
-        vol.Required(CONF_USERNAME): str,
+        vol.Required(CONF_PORT, default=DEFAULT_PORT): int,
         vol.Required(CONF_PASSWORD): str,
+        vol.Required(CONF_SKIP_SSL, default=True): bool,
     }
 )
 
 
-class PlaceholderHub:
-    """Placeholder class to make tests pass.
-
-    TODO Remove this placeholder class and replace with things from your PyPI package.
-    """
-
-    def __init__(self, host: str) -> None:
-        """Initialize."""
-        self.host = host
-
-    async def authenticate(self, username: str, password: str) -> bool:
-        """Test if we can authenticate with the host."""
-        return True
-
-
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
-    """Validate the user input allows us to connect.
+    """Validate the user input allows us to connect."""
+    from satisfactory_api_client import AsyncSatisfactoryAPI
+    from satisfactory_api_client.data.minimum_privilege_level import MinimumPrivilegeLevel
+    from satisfactory_api_client.exceptions import APIError
 
-    Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
-    """
-    # TODO validate the data can be used to set up a connection.
+    client = AsyncSatisfactoryAPI(
+        host=data[CONF_HOST],
+        port=data[CONF_PORT],
+        skip_ssl_verification=data[CONF_SKIP_SSL],
+    )
 
-    # If your PyPI package is not built with async, pass your methods
-    # to the executor:
-    # await hass.async_add_executor_job(
-    #     your_validate_func, data[CONF_USERNAME], data[CONF_PASSWORD]
-    # )
+    try:
+        await client.password_login(MinimumPrivilegeLevel.ADMINISTRATOR, data[CONF_PASSWORD])
+    except APIError as err:
+        _LOGGER.debug("Authentication failed: %s", err)
+        raise InvalidAuth from err
+    except Exception as err:
+        _LOGGER.debug("Cannot connect to Satisfactory server: %s", err)
+        raise CannotConnect from err
 
-    hub = PlaceholderHub(data[CONF_HOST])
-
-    if not await hub.authenticate(data[CONF_USERNAME], data[CONF_PASSWORD]):
-        raise InvalidAuth
-
-    # If you cannot connect:
-    # throw CannotConnect
-    # If the authentication is wrong:
-    # InvalidAuth
-
-    # Return info that you want to store in the config entry.
-    return {"title": "Name of the device"}
+    return {"title": f"Satisfactory ({data[CONF_HOST]}:{data[CONF_PORT]})"}
 
 
-class ConfigFlow(ConfigFlow, domain=DOMAIN):
+class SatisfactoryConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Satisfactory."""
 
     VERSION = 1
@@ -79,6 +61,9 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors: dict[str, str] = {}
         if user_input is not None:
+            await self.async_set_unique_id(f"{user_input[CONF_HOST]}:{user_input[CONF_PORT]}")
+            self._abort_if_unique_id_configured()
+
             try:
                 info = await validate_input(self.hass, user_input)
             except CannotConnect:

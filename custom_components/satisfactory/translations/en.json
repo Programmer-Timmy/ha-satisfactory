@@ -12,10 +12,22 @@
             "user": {
                 "data": {
                     "host": "Host",
-                    "password": "Password",
-                    "username": "Username"
+                    "port": "Port",
+                    "password": "Admin password",
+                    "skip_ssl_verification": "Disable SSL verification"
                 }
             }
+        }
+    },
+    "entity": {
+        "sensor": {
+            "num_connected_players": {"name": "Connected players"},
+            "player_limit": {"name": "Player limit"},
+            "tech_tier": {"name": "Tech tier"},
+            "average_tick_rate": {"name": "Average tick rate"},
+            "total_game_duration": {"name": "Total game duration"},
+            "active_session_name": {"name": "Active session"},
+            "game_phase": {"name": "Game phase"}
         }
     }
 }

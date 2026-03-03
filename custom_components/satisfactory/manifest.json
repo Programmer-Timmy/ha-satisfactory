@@ -1,18 +1,16 @@
 {
   "domain": "satisfactory",
   "name": "Satisfactory",
+  "version": "0.1.0",
   "codeowners": [
     "@Programmer-Timmy"
   ],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://www.home-assistant.io/integrations/satisfactory",
-  "homekit": {},
   "iot_class": "local_polling",
   "quality_scale": "bronze",
   "requirements": [
-    "satisfactory-api-client==0.1.13"
-  ],
-  "ssdp": [],
-  "zeroconf": []
+    "satisfactory-api-client==0.2.0"
+  ]
 }
