@@ -1,14 +1,14 @@
 {
   "domain": "satisfactory",
   "name": "Satisfactory",
-  "config_flow": true,
   "codeowners": [
     "@Programmer-Timmy"
   ],
+  "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/Programmer-Timmy/ha-satisfactory",
-  "issue_tracker": "https://github.com/Programmer-Timmy/ha-satisfactory/issues",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Programmer-Timmy/ha-satisfactory/issues",
   "quality_scale": "bronze",
   "requirements": [
     "satisfactory-api-client==0.2.0"
