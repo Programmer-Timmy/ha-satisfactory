@@ -12,9 +12,35 @@
       "user": {
         "data": {
           "host": "Host",
-          "password": "Wachtwoord",
-          "username": "Gebruikersnaam"
+          "port": "Port",
+          "password": "Beheerderswachtwoord",
+          "skip_ssl_verification": "SSL-verificatie uitschakelen"
         }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "num_connected_players": {
+        "name": "Verbonden spelers"
+      },
+      "player_limit": {
+        "name": "Spelerlimiet"
+      },
+      "tech_tier": {
+        "name": "Technologieniveau"
+      },
+      "average_tick_rate": {
+        "name": "Gemiddelde tikfrequentie"
+      },
+      "total_game_duration": {
+        "name": "Totale speelduur"
+      },
+      "active_session_name": {
+        "name": "Actieve sessie"
+      },
+      "game_phase": {
+        "name": "Spelfase"
       }
     }
   }
