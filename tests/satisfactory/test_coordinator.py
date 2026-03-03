@@ -23,9 +23,13 @@ def mock_client() -> AsyncMock:
 
 
 @pytest.fixture
-def coordinator(mock_hass: MagicMock, mock_client: AsyncMock) -> SatisfactoryCoordinator:
+def coordinator(
+    mock_hass: MagicMock, mock_client: AsyncMock
+) -> SatisfactoryCoordinator:
     """Return a SatisfactoryCoordinator with mocked dependencies."""
-    with patch("homeassistant.helpers.update_coordinator.DataUpdateCoordinator.__init__"):
+    with patch(
+        "homeassistant.helpers.update_coordinator.DataUpdateCoordinator.__init__"
+    ):
         coord = SatisfactoryCoordinator.__new__(SatisfactoryCoordinator)
         coord.client = mock_client
         coord.data = {}
@@ -35,6 +39,7 @@ def coordinator(mock_hass: MagicMock, mock_client: AsyncMock) -> SatisfactoryCoo
 
 
 # --- _sanitise_game_phase ---
+
 
 class TestSanitiseGamePhase:
     """Tests for _sanitise_game_phase."""
@@ -63,6 +68,7 @@ class TestSanitiseGamePhase:
 
 # --- _sanitise_average_tick_rate ---
 
+
 class TestSanitiseAverageTickRate:
     """Tests for _sanitise_average_tick_rate."""
 
@@ -78,13 +84,18 @@ class TestSanitiseAverageTickRate:
 
 # --- _sanitise_total_game_duration ---
 
+
 class TestSanitiseTotalGameDuration:
     """Tests for _sanitise_total_game_duration."""
 
-    def test_converts_seconds_to_hours(self, coordinator: SatisfactoryCoordinator) -> None:
+    def test_converts_seconds_to_hours(
+        self, coordinator: SatisfactoryCoordinator
+    ) -> None:
         assert coordinator._sanitise_total_game_duration(7200) == 2  # noqa: SLF001
 
-    def test_truncates_partial_hours(self, coordinator: SatisfactoryCoordinator) -> None:
+    def test_truncates_partial_hours(
+        self, coordinator: SatisfactoryCoordinator
+    ) -> None:
         assert coordinator._sanitise_total_game_duration(3700) == 1  # noqa: SLF001
 
     def test_zero(self, coordinator: SatisfactoryCoordinator) -> None:
@@ -92,6 +103,7 @@ class TestSanitiseTotalGameDuration:
 
 
 # --- _sanitise_data ---
+
 
 class TestSanitiseData:
     """Tests for _sanitise_data."""
@@ -115,7 +127,9 @@ class TestSanitiseData:
         assert result["totalGameDuration"] == 3
         assert result["gamePhase"] == "Phase One"
 
-    def test_missing_keys_use_defaults(self, coordinator: SatisfactoryCoordinator) -> None:
+    def test_missing_keys_use_defaults(
+        self, coordinator: SatisfactoryCoordinator
+    ) -> None:
         result = coordinator._sanitise_data({})  # noqa: SLF001
         assert result["activeSessionName"] == ""
         assert result["numConnectedPlayers"] == 0
@@ -127,6 +141,7 @@ class TestSanitiseData:
 
 
 # --- _async_update_data ---
+
 
 class TestAsyncUpdateData:
     """Tests for _async_update_data."""

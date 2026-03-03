@@ -118,7 +118,10 @@ class TestSatisfactorySensorEntity:
 
     @pytest.mark.parametrize("desc", SENSOR_DESCRIPTIONS)
     def test_all_sensors_return_correct_value(
-        self, mock_coordinator: MagicMock, mock_entry: MagicMock, desc: SatisfactorySensorEntityDescription
+        self,
+        mock_coordinator: MagicMock,
+        mock_entry: MagicMock,
+        desc: SatisfactorySensorEntityDescription,
     ) -> None:
         sensor = make_sensor(mock_coordinator, mock_entry, desc)
         assert sensor.native_value == SAMPLE_DATA[desc.data_key]
