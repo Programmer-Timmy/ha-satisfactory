@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 from .const import CONF_SKIP_SSL
 from .coordinator import SatisfactoryCoordinator
 
-_PLATFORMS: list[Platform] = [Platform.SENSOR]
+_PLATFORMS: list[Platform] = [Platform.EVENT, Platform.SENSOR]
 
 type SatisfactoryConfigEntry = ConfigEntry[SatisfactoryCoordinator]
 
@@ -38,7 +38,7 @@ async def async_setup_entry(
     except APIError as err:
         raise ConfigEntryAuthFailed from err
 
-    coordinator = SatisfactoryCoordinator(hass, client, entry.entry_id)
+    coordinator = SatisfactoryCoordinator(hass, client)
     await coordinator.async_config_entry_first_refresh()
 
     entry.runtime_data = coordinator

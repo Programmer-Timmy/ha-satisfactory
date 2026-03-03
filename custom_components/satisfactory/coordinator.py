@@ -10,12 +10,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from satisfactory_api_client.exceptions import APIError
 
-from .const import (
-    DEFAULT_SCAN_INTERVAL,
-    DOMAIN,
-    EVENT_PLAYER_JOINED,
-    EVENT_PLAYER_LEFT,
-)
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -27,9 +22,7 @@ _LOGGER = logging.getLogger(__name__)
 class SatisfactoryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Coordinator to poll the Satisfactory Dedicated Server API."""
 
-    def __init__(
-        self, hass: HomeAssistant, client: AsyncSatisfactoryAPI, entry_id: str
-    ) -> None:
+    def __init__(self, hass: HomeAssistant, client: AsyncSatisfactoryAPI) -> None:
         """Initialize the coordinator."""
         super().__init__(
             hass,
@@ -38,7 +31,6 @@ class SatisfactoryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )
         self.client = client
-        self.entry_id = entry_id
 
     def _sanitise_game_phase(self, game_phase: str) -> str:
         """Convert the game phase string from the API into a more user-friendly format."""  # noqa: E501
@@ -75,29 +67,6 @@ class SatisfactoryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "gamePhase": self._sanitise_game_phase(data.get("gamePhase", "")),
         }
 
-    def _fire_events(self, old_data: dict[str, Any], new_data: dict[str, Any]) -> None:
-        """Fire HA events for notable state changes."""
-        old_players = old_data.get("numConnectedPlayers", 0)
-        new_players = new_data.get("numConnectedPlayers", 0)
-        if new_players > old_players:
-            self.hass.bus.async_fire(
-                EVENT_PLAYER_JOINED,
-                {
-                    "entry_id": self.entry_id,
-                    "num_connected_players": new_players,
-                    "player_limit": new_data.get("playerLimit", 0),
-                },
-            )
-        elif new_players < old_players:
-            self.hass.bus.async_fire(
-                EVENT_PLAYER_LEFT,
-                {
-                    "entry_id": self.entry_id,
-                    "num_connected_players": new_players,
-                    "player_limit": new_data.get("playerLimit", 0),
-                },
-            )
-
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from the Satisfactory server."""
         try:
@@ -113,6 +82,4 @@ class SatisfactoryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         data = self._sanitise_data(state_response.data.get("serverGameState", {}))
         data["serverHealth"] = health_response.data.get("health", "unknown")
-        if self.data:
-            self._fire_events(self.data, data)
         return data
