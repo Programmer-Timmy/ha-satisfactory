@@ -1,10 +1,10 @@
 {
   "domain": "satisfactory",
   "name": "Satisfactory",
+  "config_flow": true,
   "codeowners": [
     "@Programmer-Timmy"
   ],
-  "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/Programmer-Timmy/ha-satisfactory",
   "issue_tracker": "https://github.com/Programmer-Timmy/ha-satisfactory/issues",
