@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT
-from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
+from satisfactory_api_client import APIError, AsyncSatisfactoryAPI
+from satisfactory_api_client.data import MinimumPrivilegeLevel
 
 from .const import CONF_SKIP_SSL, DEFAULT_PORT, DOMAIN
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,14 +29,8 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 )
 
 
-async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
+async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:  # noqa: ARG001
     """Validate the user input allows us to connect."""
-    from satisfactory_api_client import AsyncSatisfactoryAPI
-    from satisfactory_api_client.data.minimum_privilege_level import (
-        MinimumPrivilegeLevel,
-    )
-    from satisfactory_api_client.exceptions import APIError
-
     client = AsyncSatisfactoryAPI(
         host=data[CONF_HOST],
         port=data[CONF_PORT],
@@ -40,13 +38,15 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     )
 
     try:
-        await client.password_login(MinimumPrivilegeLevel.ADMINISTRATOR, data[CONF_PASSWORD])
+        await client.password_login(
+            MinimumPrivilegeLevel.ADMINISTRATOR, data[CONF_PASSWORD]
+        )
     except APIError as err:
         _LOGGER.debug("Authentication failed: %s", err)
-        raise InvalidAuth from err
+        raise InvalidAuthError from err
     except Exception as err:
         _LOGGER.debug("Cannot connect to Satisfactory server: %s", err)
-        raise CannotConnect from err
+        raise CannotConnectError from err
 
     return {"title": f"Satisfactory ({data[CONF_HOST]}:{data[CONF_PORT]})"}
 
@@ -62,14 +62,16 @@ class SatisfactoryConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            await self.async_set_unique_id(f"{user_input[CONF_HOST]}:{user_input[CONF_PORT]}")
+            await self.async_set_unique_id(
+                f"{user_input[CONF_HOST]}:{user_input[CONF_PORT]}"
+            )
             self._abort_if_unique_id_configured()
 
             try:
                 info = await validate_input(self.hass, user_input)
-            except CannotConnect:
+            except CannotConnectError:
                 errors["base"] = "cannot_connect"
-            except InvalidAuth:
+            except InvalidAuthError:
                 errors["base"] = "invalid_auth"
             except Exception:
                 _LOGGER.exception("Unexpected exception")
@@ -82,9 +84,9 @@ class SatisfactoryConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
 
-class CannotConnect(HomeAssistantError):
+class CannotConnectError(HomeAssistantError):
     """Error to indicate we cannot connect."""
 
 
-class InvalidAuth(HomeAssistantError):
+class InvalidAuthError(HomeAssistantError):
     """Error to indicate there is invalid auth."""

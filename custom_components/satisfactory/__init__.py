@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, Platform
-from homeassistant.core import HomeAssistant
 from satisfactory_api_client import AsyncSatisfactoryAPI
 from satisfactory_api_client.data.minimum_privilege_level import MinimumPrivilegeLevel
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
 
 from .const import CONF_SKIP_SSL
 from .coordinator import SatisfactoryCoordinator
@@ -16,7 +20,9 @@ _PLATFORMS: list[Platform] = [Platform.SENSOR]
 type SatisfactoryConfigEntry = ConfigEntry[SatisfactoryCoordinator]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: SatisfactoryConfigEntry) -> bool:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: SatisfactoryConfigEntry
+) -> bool:
     """Set up Satisfactory from a config entry."""
     client = AsyncSatisfactoryAPI(
         host=entry.data[CONF_HOST],
@@ -24,7 +30,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: SatisfactoryConfigEntry)
         skip_ssl_verification=entry.data.get(CONF_SKIP_SSL, True),
     )
 
-    await client.password_login(MinimumPrivilegeLevel.ADMINISTRATOR, entry.data[CONF_PASSWORD])
+    await client.password_login(
+        MinimumPrivilegeLevel.ADMINISTRATOR, entry.data[CONF_PASSWORD]
+    )
 
     coordinator = SatisfactoryCoordinator(hass, client)
     await coordinator.async_config_entry_first_refresh()
@@ -36,6 +44,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: SatisfactoryConfigEntry)
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: SatisfactoryConfigEntry) -> bool:
+async def async_unload_entry(
+    hass: HomeAssistant, entry: SatisfactoryConfigEntry
+) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, _PLATFORMS)

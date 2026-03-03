@@ -3,22 +3,24 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .coordinator import SatisfactoryCoordinator
+
+if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import HomeAssistant
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -81,9 +83,8 @@ SENSOR_DESCRIPTIONS: tuple[SatisfactorySensorEntityDescription, ...] = (
     ),
 )
 
-
 async def async_setup_entry(
-    hass: HomeAssistant,
+    hass: HomeAssistant,   # noqa: ARG001
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
@@ -96,7 +97,9 @@ async def async_setup_entry(
     )
 
 
-class SatisfactorySensorEntity(CoordinatorEntity[SatisfactoryCoordinator], SensorEntity):
+class SatisfactorySensorEntity(
+    CoordinatorEntity[SatisfactoryCoordinator], SensorEntity
+):
     """Representation of a Satisfactory sensor."""
 
     entity_description: SatisfactorySensorEntityDescription
