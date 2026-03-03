@@ -61,7 +61,7 @@ jobs:
   pytest:
     name: Run Pytest
     runs-on: ubuntu-latest
-    needs: [hassfest, ruff]  # optional: run after validation and lint
+    needs: [hassfest, ruff, hacs]
 
     steps:
       - name: Checkout repository
