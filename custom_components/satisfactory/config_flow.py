@@ -6,13 +6,12 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import DEFAULT_PORT, DOMAIN, CONF_SKIP_SSL
+from .const import CONF_SKIP_SSL, DEFAULT_PORT, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,7 +28,9 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate the user input allows us to connect."""
     from satisfactory_api_client import AsyncSatisfactoryAPI
-    from satisfactory_api_client.data.minimum_privilege_level import MinimumPrivilegeLevel
+    from satisfactory_api_client.data.minimum_privilege_level import (
+        MinimumPrivilegeLevel,
+    )
     from satisfactory_api_client.exceptions import APIError
 
     client = AsyncSatisfactoryAPI(

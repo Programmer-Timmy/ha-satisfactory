@@ -6,11 +6,10 @@ import logging
 from datetime import timedelta
 from typing import Any
 
-from satisfactory_api_client import AsyncSatisfactoryAPI
-from satisfactory_api_client.exceptions import APIError
-
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from satisfactory_api_client import AsyncSatisfactoryAPI
+from satisfactory_api_client.exceptions import APIError
 
 from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 
@@ -34,7 +33,7 @@ class SatisfactoryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Convert the game phase string from the API into a more user-friendly format."""
         if not game_phase:
             return ""
-        return game_phase.split("/")[-1].split(".")[-1].replace("_", " ").replace("'", "")
+        return game_phase.rsplit("/", maxsplit=1)[-1].rsplit(".", maxsplit=1)[-1].replace("_", " ").replace("'", "")
 
     def _sanitise_average_tick_rate(self, tick_rate: float) -> float:
         """Round the average tick rate to 2 decimal places."""

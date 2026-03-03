@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from satisfactory_api_client import AsyncSatisfactoryAPI
-from satisfactory_api_client.data.minimum_privilege_level import MinimumPrivilegeLevel
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, Platform
 from homeassistant.core import HomeAssistant
+from satisfactory_api_client import AsyncSatisfactoryAPI
+from satisfactory_api_client.data.minimum_privilege_level import MinimumPrivilegeLevel
 
 from .const import CONF_SKIP_SSL
 from .coordinator import SatisfactoryCoordinator

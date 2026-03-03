@@ -1,6 +1,6 @@
 """Test the Satisfactory config flow."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 from homeassistant import config_entries
 from homeassistant.components.satisfactory.config_flow import CannotConnect, InvalidAuth
