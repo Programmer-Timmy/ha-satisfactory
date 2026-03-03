@@ -48,8 +48,8 @@ class SatisfactoryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         return round(tick_rate, 2)
 
     def _sanitise_total_game_duration(self, duration: int) -> int:
-        """Convert total game duration from seconds to hours."""
-        return duration // 3600
+        """Return total game duration in seconds."""
+        return duration
 
     def _sanitise_data(self, data: dict[str, Any]) -> dict[str, Any]:
         """Sanitise the raw data from the API."""

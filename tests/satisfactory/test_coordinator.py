@@ -91,12 +91,12 @@ class TestSanitiseTotalGameDuration:
     def test_converts_seconds_to_hours(
         self, coordinator: SatisfactoryCoordinator
     ) -> None:
-        assert coordinator._sanitise_total_game_duration(7200) == 2  # noqa: SLF001
+        assert coordinator._sanitise_total_game_duration(7200) == 7200  # noqa: SLF001
 
     def test_truncates_partial_hours(
         self, coordinator: SatisfactoryCoordinator
     ) -> None:
-        assert coordinator._sanitise_total_game_duration(3700) == 1  # noqa: SLF001
+        assert coordinator._sanitise_total_game_duration(3700) == 3700  # noqa: SLF001
 
     def test_zero(self, coordinator: SatisfactoryCoordinator) -> None:
         assert coordinator._sanitise_total_game_duration(0) == 0  # noqa: SLF001
@@ -124,7 +124,7 @@ class TestSanitiseData:
         assert result["playerLimit"] == 4
         assert result["techTier"] == 5
         assert result["averageTickRate"] == 29.99
-        assert result["totalGameDuration"] == 3
+        assert result["totalGameDuration"] == 10800
         assert result["gamePhase"] == "Phase One"
 
     def test_missing_keys_use_defaults(
@@ -170,7 +170,7 @@ class TestAsyncUpdateData:
 
         assert result["activeSessionName"] == "TestSession"
         assert result["numConnectedPlayers"] == 2
-        assert result["totalGameDuration"] == 1
+        assert result["totalGameDuration"] == 3600
         assert result["serverHealth"] == "healthy"
 
     async def test_health_slow(
