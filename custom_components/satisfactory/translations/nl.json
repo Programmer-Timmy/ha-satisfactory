@@ -20,19 +20,6 @@
     }
   },
   "entity": {
-    "event": {
-      "player_activity": {
-        "name": "Speler activity",
-        "state_attributes": {
-          "event_type": {
-            "state": {
-              "player_joined": "Speler verbonden",
-              "player_left": "Speler verbroken"
-            }
-          }
-        }
-      }
-    },
     "sensor": {
       "num_connected_players": {
         "name": "Verbonden spelers"
@@ -54,9 +41,6 @@
       },
       "game_phase": {
         "name": "Spelfase"
-      },
-      "server_health": {
-        "name": "Servergezondheid"
       }
     }
   }
