@@ -70,7 +70,6 @@ class SatisfactoryPlayerActivityEventEntity(
                 self._trigger_event(
                     "player_joined",
                     {
-                        "entry_id": self._entry_id,
                         "num_connected_players": new_players,
                         "player_limit": player_limit,
                     },
@@ -79,7 +78,6 @@ class SatisfactoryPlayerActivityEventEntity(
                 self._trigger_event(
                     "player_left",
                     {
-                        "entry_id": self._entry_id,
                         "num_connected_players": new_players,
                         "player_limit": player_limit,
                     },
