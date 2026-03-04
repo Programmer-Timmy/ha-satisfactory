@@ -20,6 +20,19 @@
     }
   },
   "entity": {
+    "event": {
+      "player_activity": {
+        "name": "Player activity",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "player_joined": "Player joined",
+              "player_left": "Player left"
+            }
+          }
+        }
+      }
+    },
     "sensor": {
       "num_connected_players": {"name": "Connected players"},
       "player_limit": {"name": "Player limit"},

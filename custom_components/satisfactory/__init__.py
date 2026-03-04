@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 from .const import CONF_SKIP_SSL
 from .coordinator import SatisfactoryCoordinator
 
-_PLATFORMS: list[Platform] = [Platform.SENSOR]
+_PLATFORMS: list[Platform] = [Platform.EVENT, Platform.SENSOR]
 
 type SatisfactoryConfigEntry = ConfigEntry[SatisfactoryCoordinator]
 
