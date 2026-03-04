@@ -46,6 +46,7 @@ class SatisfactoryPlayerActivityEventEntity(
     ) -> None:
         """Initialize the event entity."""
         super().__init__(coordinator)
+        self._entry_id = entry.entry_id
         self._attr_unique_id = f"{entry.unique_id}_player_activity"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.unique_id or entry.entry_id)},
@@ -63,6 +64,7 @@ class SatisfactoryPlayerActivityEventEntity(
                 self._trigger_event(
                     "player_joined",
                     {
+                        "entry_id": self._entry_id,
                         "num_connected_players": new_players,
                         "player_limit": player_limit,
                     },
@@ -71,6 +73,7 @@ class SatisfactoryPlayerActivityEventEntity(
                 self._trigger_event(
                     "player_left",
                     {
+                        "entry_id": self._entry_id,
                         "num_connected_players": new_players,
                         "player_limit": player_limit,
                     },
