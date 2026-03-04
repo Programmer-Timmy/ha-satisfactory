@@ -48,7 +48,7 @@ Go to **Settings → Devices & Services → Add Integration** and search for **S
 
 ## Events
 
-The integration fires events on the Home Assistant event bus whenever the server state changes. You can use these in automations via the **Event** trigger with the event type listed below.
+The integration fires events on the Home Assistant event bus when players join or leave the server (that is, when the number of connected players changes). You can use these in automations via the **Event** trigger with the event type listed below.
 
 | Event type | Fired when | Event data |
 |---|---|---|

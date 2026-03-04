@@ -46,9 +46,15 @@ class SatisfactoryPlayerActivityEventEntity(
     ) -> None:
         """Initialize the event entity."""
         super().__init__(coordinator)
-        self._attr_unique_id = f"{entry.unique_id}_player_activity"
+        self._attr_unique_id = f"{(entry.unique_id or entry.entry_id)}_player_activity"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.unique_id or entry.entry_id)},
+            name=entry.title,
+            manufacturer="Coffee Stain Studios",
+            model="Satisfactory Dedicated Server",
+            configuration_url=entry.data.get("configuration_url")
+            if isinstance(entry.data, dict)
+            else None,
         )
         self._prev_players: int | None = None
 
