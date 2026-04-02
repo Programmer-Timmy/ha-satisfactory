@@ -1,5 +1,5 @@
 homeassistant==2026.2.3
-satisfactory_api_client==0.2.0
+satisfactory_api_client==0.2.1
 pip>=21.3.1
 ruff==0.15.4
 pytest==9.0.2
