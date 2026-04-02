@@ -15,7 +15,7 @@
   ],
   "quality_scale": "silver",
   "requirements": [
-    "satisfactory-api-client==0.2.0"
+    "satisfactory-api-client==0.2.1"
   ],
   "version": "0.2.0"
 }
